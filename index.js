@@ -82,7 +82,7 @@ const wit = new Wit({
 
         var response;
         if (ordinal) { 
-          var place = ordinal + 1;
+          var place = ordinal - 1;
           var team = standings[place];
           response = team ? team : "I\'m sorry, your question doesn\'t make sense";
         } else {
