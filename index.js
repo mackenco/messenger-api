@@ -14,7 +14,10 @@ const witToken = process.env.WIT_ACCESS_TOKEN;
 const gameData = {
   'Astros':[{
     'date': '2016-07-16',
-    'scoreString': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.' 
+    'title': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.' 
+    'image': 'http://m.mlb.com/assets/images/9/4/4/189989944/cuts/Martin1280_cqe84jx2_p9jo6pyt.jpg',
+    'recap': 'http://m.mlb.com/news/article/189965930/mariners-defeat-astros-in-pitchers-duel/',
+    'page': 'http://mlb.mlb.com/mlb/gameday/index.jsp?gid=2016_07_16_houmlb_seamlb_1#game=2016_07_16_houmlb_seamlb_1,game_state=Wrapup'
   },
   {
     'date': '2016-07-15',
@@ -62,23 +65,18 @@ const wit = new Wit({
         var team = firstEntityValue(entities, 'team');
         var date = firstEntityValue(entities, 'datetime').split("T")[0];
         var teamGameData = gameData[team];
-
-        context.score = _.findWhere(teamGameData, {date: date}).scoreString;
+        var game = _.findWhere(teamGameData, {date: date});
+        context.scoreMessage = buildGenericMessage(game);
         return resolve(context);
       }); 
     },
     getStandings({context, entities}) {
       return new Promise(function(resolve, reject) {
         var division = firstEntityValue(entities, 'division');
-        console.log(division);
         var league = firstEntityValue(entities, 'league'); 
-        console.log(league);
         var leagueData = standingsData[league];
-        console.log(leagueData);
         var standings = division ? leagueData[division] : leagueData['all']; 
-        console.log(standings);
         var ordinal = firstEntityValue(entities, 'ordinal');
-        console.log(ordinal);
 
         var response;
         if (ordinal) { 
@@ -160,7 +158,7 @@ app.post('/webhook/', function(req, res) {
               sessions[sessionId].context = context;
             })
             .catch((err) => {
-              console.error('Oops! Got an error from Wite: ', err.stack || err); 
+              console.error('Oops! Got an error from Wit: ', err.stack || err); 
             })
           } else {
             console.log('received event', JSON.stringify(event)); 
@@ -192,54 +190,45 @@ function sendTextMessage(sender, text) {
   });
 }
 
-function sendGenericMessage(sender) {
-  let messageData = {
+function buildGenericMessage(message) {
+  return {
+  // let messageData = {
     "attachment": {
       "type": "template",
       "payload": {
         "template_type": "generic",
         "elements": [{
-          "title": "First card",
-          "subtitle": "Element #1 of an hscroll",
-          "image_url": "http://mlb.mlb.com/mlb/images/players/head_shot/514888.jpg",
+          "title": message.title,
+          "image_url": mesage.image, 
           "buttons": [{
             "type": "web_url",
-            "url": "http://m.mlb.com/player/514888/jose-altuve",
-            "title": "Open Web URL"
+            "url": message.page,
+            "title": "View on game on MLB.com"
           }, {
-            "type": "postback",
-            "title": "Postback",
-            "payload": "Payload for first element in a generic bubble"
-          }]
-        }, {
-          "title": "Second card",
-          "subtitle": "Element #2 of an hscroll",
-          "image_url": "http://mlb.mlb.com/images/players/action_shots/514888.jpg",
-          "buttons": [{
-            "type": "postback",
-            "title": "Postback",
-            "payload": "Payload for a second element in a generic bubble"
+            "type": "web_url",
+            "url": message.recap,
+            "title": "Recap"
           }]
         }] 
       } 
     } 
   };
 
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: fbToken },
-    method: 'POST',
-    json: {
-      recipient: { id: sender },
-      message: messageData 
-    } 
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending messages: ', error); 
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error); 
-    } 
-  });
+//   request({
+//     url: 'https://graph.facebook.com/v2.6/me/messages',
+//     qs: { access_token: fbToken },
+//     method: 'POST',
+//     json: {
+//       recipient: { id: sender },
+//       message: messageData 
+//     } 
+//   }, function(error, response, body) {
+//     if (error) {
+//       console.log('Error sending messages: ', error); 
+//     } else if (response.body.error) {
+//       console.log('Error: ', response.body.error); 
+//     } 
+//   });
 }
 
 app.listen(app.get('port'), function() {
