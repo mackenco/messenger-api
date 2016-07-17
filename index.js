@@ -199,7 +199,7 @@ function buildGenericMessage(message) {
         "template_type": "generic",
         "elements": [{
           "title": message.title,
-          "image_url": mesage.image, 
+          "image_url": message.image, 
           "buttons": [{
             "type": "web_url",
             "url": message.page,
