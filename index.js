@@ -77,8 +77,19 @@ const wit = new Wit({
         console.log(leagueData);
         var standings = division ? leagueData[division] : leagueData['all']; 
         console.log(standings);
+        var ordinal = firstEntityValue(entities, 'ordinal');
+        console.log(ordinal);
 
-        context.standings = standings.join("\n");
+        var response;
+        if (ordinal) { 
+          var place = ordinal + 1;
+          var team = standings[place];
+          response = team ? team : "I\'m sorry, your question doesn\'t make sense";
+        } else {
+          response = standings.join("\n");
+        }
+
+        context.standings = response; 
         return resolve(context);
       });
     }
