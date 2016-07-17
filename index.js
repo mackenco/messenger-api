@@ -180,6 +180,7 @@ app.post('/webhook/', function(req, res) {
 function sendTextMessage(sender, text, generic) {
   var messageData;
   if (generic) { 
+    console.log('generic is firing');
     messageData = { attachment: text.attachment }; 
   } else {
     messageData = { text: text.substring(0, 256) };
