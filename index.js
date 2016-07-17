@@ -13,11 +13,11 @@ const witToken = process.env.WIT_ACCESS_TOKEN;
 
 const gameData = {
   'Astros':[{
-    'date': '2016-07-16T00:00:00.000-07:00',
+    'date': '2016-07-16',
     'scoreString': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.' 
   },
   {
-    'date': '2016-07-15T00:00:00.000-07:00',
+    'date': '2016-07-15',
     'scoreString': 'The Houston Astros beat the Seattle Mariners 7-3 on July 15.' 
   }]
 }
@@ -39,14 +39,10 @@ const wit = new Wit({
       }
     },
     getScore({context, entities}) {
-      console.log('entities ', entities);
       return new Promise(function(resolve, reject) {
         var team = firstEntityValue(entities, 'team');
-        console.log('team is ', team);
-        var date = firstEntityValue(entities, 'datetime');
-        console.log('date is ', date);
+        var date = firstEntityValue(entities, 'datetime').split("T")[0];
         var teamGameData = gameData[team];
-        console.log('teamGameData is', teamGameData);
 
         context.score = _.findWhere(teamGameData, {date: date}).scoreString;
         return resolve(context);
