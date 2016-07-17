@@ -27,8 +27,18 @@ app.post('/webhook/', function(req, res) {
     let sender = event.sender.id;
     if (event.message && event.message.text) {
       let text = event.message.text;
+      if (text === 'Generic') {
+        sendGenericMessage(sender);
+        contine; 
+      }
       sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200)); 
     } 
+
+    if (event.postback) {
+      let text = JSON.stringify(event.postback);
+      sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token);
+      contine; 
+    }
   });
   res.sendStatus(200);
 });
@@ -44,6 +54,56 @@ function sendTextMessage(sender, text) {
     json: {
       recipient: { id: sender },
       message: messageData, 
+    } 
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error); 
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error); 
+    } 
+  });
+}
+
+function sendGenericMessage(sender) {
+  let messageData = {
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [{
+          "title": "First card",
+          "subtitle": "Element #1 of an hscroll",
+          "image_url": "http://mlb.mlb.com/mlb/images/players/head_shot/514888.jpg",
+          "buttons": [{
+            "type": "web_url",
+            "url": "http://m.mlb.com/player/514888/jose-altuve",
+            "title": "web url"
+          }, {
+            "type": "postback",
+            "title": "Postback",
+            "payload": "Payload for first element in a generic bubble"
+          }]
+        }, {
+          "title": "Second card",
+          "subtitle": "Element #2 of an hscroll",
+          "image_url": "http://mlb.mlb.com/images/players/action_shots/514888.jpg",
+          "butons": [{
+            "type": "postback",
+            "title": "Postback",
+            "payload": "Payload for a second element in a generic bubble"
+          }]
+        }] 
+      } 
+    } 
+  };
+
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: token },
+    method: 'POST',
+    json: {
+      recipient: { id: sender },
+      message: messageData 
     } 
   }, function(error, response, body) {
     if (error) {
