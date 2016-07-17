@@ -22,7 +22,7 @@ const gameData = {
   }]
 }
 
-const witClient = new Wit({
+const wit = new Wit({
   accessToken: witToken,
   actions: {
     send({sessionId}, {text}) {
