@@ -69,7 +69,8 @@ const wit = new Wit({
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         console.log('game:', game);
-        context.score = buildGenericMessage(game);
+        // context.score = buildGenericMessage(game);
+        context.score = game.title;
         return resolve(context);
       }); 
     },
