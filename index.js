@@ -13,11 +13,11 @@ const witToken = process.env.WIT_ACCESS_TOKEN;
 
 const gameData = {
   'Astros':[{
-    'date': '7/16/2016, 12:00:00 AM',
+    'date': '2016-07-16T00:00:00.000-07:00',
     'scoreString': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.' 
   },
   {
-    'date': '7/15/2016, 12:00:00 AM',
+    'date': '2016-07-15T00:00:00.000-07:00',
     'scoreString': 'The Houston Astros beat the Seattle Mariners 7-3 on July 15.' 
   }]
 }
