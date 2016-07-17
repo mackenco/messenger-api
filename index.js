@@ -3,7 +3,57 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const _ = require('underscore');
+const {Wit, log} = require('node-wit');
 const app = express();
+
+const fbToken = process.env.FB_PAGE_ACCESS_TOKEN;
+const witToken = process.env.WIT_ACCESS_TOKEN; 
+
+const gameData = {
+  'Astros':[{
+    'date': '7/16/2016, 12:00:00 AM',
+    'scoreString': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.' 
+  },
+  {
+    'date': '7/15/2016, 12:00:00 AM',
+    'scoreString': 'The Houston Astros beat the Seattle Mariners 7-3 on July 15.' 
+  }]
+}
+
+const witClient = new Wit({
+  accessToken: witToken,
+  actions: {
+    send(request, response) {
+      return new Promise(function(resolve, reject) {
+        console.log(JSON.stringify(response));
+        return resolve(); 
+      }); 
+    },
+    getScore({context, entities}) {
+      return new Promise(function(resolve, reject) {
+        var team = firstEntityValue(entities, 'team');
+        var date = firstEntityValue(entities, 'date');
+        var team = gameData[team];
+
+        context.score = _.findWhere(team, {date: date}).scoreString;
+        return resolve(context);
+      }); 
+    },
+  }
+});
+
+const firstEntityValue = (entities, entity) => {
+  const val = entities && entities[entity] &&
+    Array.isArray(entities[entity]) &&
+    entities[entity].length > 0 &&
+    entities[entity][0].value
+  ;
+  if (!val) {
+      return null;
+    }
+  return typeof val === 'object' ? val.value : val;
+};
 
 app.set('port', (process.env.PORT || 8080));
 
@@ -36,20 +86,19 @@ app.post('/webhook/', function(req, res) {
 
     if (event.postback) {
       let text = JSON.stringify(event.postback);
-      sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token);
+      sendTextMessage(sender, "Postback received: " + text.substring(0, 200), fbToken);
       return;
     }
   });
   res.sendStatus(200);
 });
 
-const token = process.env.FB_PAGE_ACCESS_TOKEN
 
 function sendTextMessage(sender, text) {
   let messageData = { text: text };
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: token },
+    qs: { access_token: fbToken },
     method: 'POST',
     json: {
       recipient: { id: sender },
@@ -77,7 +126,7 @@ function sendGenericMessage(sender) {
           "buttons": [{
             "type": "web_url",
             "url": "http://m.mlb.com/player/514888/jose-altuve",
-            "title": "web url"
+            "title": "Open Web URL"
           }, {
             "type": "postback",
             "title": "Postback",
@@ -99,7 +148,7 @@ function sendGenericMessage(sender) {
 
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: token },
+    qs: { access_token: fbToken },
     method: 'POST',
     json: {
       recipient: { id: sender },
