@@ -50,9 +50,7 @@ const wit = new Wit({
     send({sessionId}, {text}) {
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
-        console.log('in send');
-        console.log('text:', text);
-        return sendTextMessage(recipientId, text, text.generic)
+        return sendTextMessage(recipientId, text)
         .then(() => null)
         .catch((err) => {
           console.error('Oops, something went wrong while forward the response to ', recipientId, ':', err.stack || err); 
@@ -177,9 +175,9 @@ app.post('/webhook/', function(req, res) {
 });
 
 
-function sendTextMessage(sender, text, generic) {
+function sendTextMessage(sender, text) {
   var messageData;
-  if (generic) { 
+  if (text.generic) { 
     console.log('generic is firing');
     messageData = { attachment: text.attachment }; 
   } else {
