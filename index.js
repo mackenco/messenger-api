@@ -24,11 +24,18 @@ const gameData = {
 const witClient = new Wit({
   accessToken: witToken,
   actions: {
-    send(request, response) {
-      return new Promise(function(resolve, reject) {
-        console.log(JSON.stringify(response));
-        return resolve(); 
-      }); 
+    send({sessionId}, {text}) {
+      const recipientId = sessions[sessionId].fbid;
+      if (recipientId) {
+        return sendTextMessage(recipientId, text)
+        .then(() => null)
+        .catch((err) => {
+          console.error('Oops, something went wrong while forward the response to ', recipientId, ':', err.stack || err); 
+        });
+      } else {
+          console.error('Oops, Cannot find user for session:', sessionId);
+          return Promise.resolve(); 
+      }
     },
     getScore({context, entities}) {
       return new Promise(function(resolve, reject) {
@@ -39,9 +46,24 @@ const witClient = new Wit({
         context.score = _.findWhere(team, {date: date}).scoreString;
         return resolve(context);
       }); 
-    },
-  }
+    }
+  },
+  logger: new log.Logger(log.INFO)
 });
+
+const sessions = {};
+
+const findOrCreateSession = (fbid) => {
+  let sessionId;
+  Object.keys(sessions).forEach(k => {
+    if (sessions[k].fbid === fbid) { sessionId = k; } 
+  });
+  if (!sessionId) {
+    sessionId = new Date().toISOString();
+    sessions[sessionId] = {fbid: fbid, context: {}}; 
+  }
+  return sessionId;
+};
 
 const firstEntityValue = (entities, entity) => {
   const val = entities && entities[entity] &&
@@ -68,28 +90,37 @@ app.get('/webhook/', function(req, res) {
   if (req.query['hub.verify_token'] === 'hi_please_verify_me') {
     res.send(req.query['hub.challenge']);  
   }
-  res.send('Error, wrong token');  
+  res.sendStatus(400);
 });
 
 app.post('/webhook/', function(req, res) {
-  let messaging_events = req.body.entry[0].messaging;
-  messaging_events.forEach(function(event) {
-    let sender = event.sender.id;
-    if (event.message && event.message.text) {
-      let text = event.message.text;
-      if (text === 'Generic') {
-        sendGenericMessage(sender);
-        return;
-      }
-      sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200)); 
-    } 
+  const data = req.body;
 
-    if (event.postback) {
-      let text = JSON.stringify(event.postback);
-      sendTextMessage(sender, "Postback received: " + text.substring(0, 200), fbToken);
-      return;
-    }
-  });
+  if (data.object === 'page') {
+    entry.messaging.forEach(event => {
+      if (event.message) {
+        const sender = event.sender.id;
+        const sessionId = findOrCreateSession(sender);
+        const {text, attachments} = event.message;
+
+        if (attachments) {
+          sendTextMessage(sender, 'Sorry, I can only process text messages for now.')
+          .catch(console.error); 
+        } else if (text) {
+          wit.runActions(sessionId, text, sessions[sessionId].context)
+          .then((context) => {
+            console.log('Waiting for next user message.');
+            sessions[sessionId].context = context;
+          })
+          .catch((err) => {
+            console.error('Oops! Got an error from Wite: ', err.stack || err); 
+          })
+        } else {
+          console.log('received event', JSON.stringify(event)); 
+        }
+      } 
+    }) 
+  }
   res.sendStatus(200);
 });
 
