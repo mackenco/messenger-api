@@ -98,29 +98,31 @@ app.post('/webhook/', function(req, res) {
   const data = req.body;
 
   if (data.object === 'page') {
-    data.entry.messaging.forEach(event => {
-      if (event.message) {
-        const sender = event.sender.id;
-        const sessionId = findOrCreateSession(sender);
-        const {text, attachments} = event.message;
+    data.entry.forEach(entry => {
+      entry.messaging.forEach(event => {
+        if (event.message) {
+          const sender = event.sender.id;
+          const sessionId = findOrCreateSession(sender);
+          const {text, attachments} = event.message;
 
-        if (attachments) {
-          sendTextMessage(sender, 'Sorry, I can only process text messages for now.')
-          .catch(console.error); 
-        } else if (text) {
-          wit.runActions(sessionId, text, sessions[sessionId].context)
-          .then((context) => {
-            console.log('Waiting for next user message.');
-            sessions[sessionId].context = context;
-          })
-          .catch((err) => {
-            console.error('Oops! Got an error from Wite: ', err.stack || err); 
-          })
-        } else {
-          console.log('received event', JSON.stringify(event)); 
-        }
-      } 
-    }) 
+          if (attachments) {
+            sendTextMessage(sender, 'Sorry, I can only process text messages for now.')
+            .catch(console.error); 
+          } else if (text) {
+            wit.runActions(sessionId, text, sessions[sessionId].context)
+            .then((context) => {
+              console.log('Waiting for next user message.');
+              sessions[sessionId].context = context;
+            })
+            .catch((err) => {
+              console.error('Oops! Got an error from Wite: ', err.stack || err); 
+            })
+          } else {
+            console.log('received event', JSON.stringify(event)); 
+          }
+        } 
+      });
+    });
   }
   res.sendStatus(200);
 });
