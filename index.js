@@ -64,6 +64,8 @@ const wit = new Wit({
       return new Promise(function(resolve, reject) {
         var team = firstEntityValue(entities, 'team');
         var date = firstEntityValue(entities, 'datetime').split("T")[0];
+        if (!team && !date) { return resolve(context); }
+
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         context.scoreMessage = buildGenericMessage(game);
@@ -74,6 +76,8 @@ const wit = new Wit({
       return new Promise(function(resolve, reject) {
         var division = firstEntityValue(entities, 'division');
         var league = firstEntityValue(entities, 'league'); 
+        if (!division && !league) { return resolve(context); }
+
         var leagueData = standingsData[league];
         var standings = division ? leagueData[division] : leagueData['all']; 
         var ordinal = firstEntityValue(entities, 'ordinal');
