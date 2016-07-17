@@ -36,7 +36,7 @@ const standingsData = {
     "central": ["1. Chicago Cubs", "2. St. Louis Cardinals (+7.5)", "3. Pittsburgh Pirates (+9)", "4. Milwaukee Brewers (+15.5)", "5. Cincinnati Reds (+21.5)"],
     "west": ["1. San Francisco Giants", "2. Los Angeles Dodgers (+5.5)", "3. Colorado Rockies (+14)", "4. San Diego Padres (+16.5)", "5. Arizona Diamondbacks (+18)"],
     "all": ["San Francisco Giants", "Washington Nationals (+1)", "Chicago Cubs (+1.5)", "Los Angeles Dodgers (+5.5)", "New York Mets (+7.5)", "Miami Marlins (+8)", 
-            "St. Louis Cardinals (+9)", "Pittsburgh Pirates (+10.5)", "Philadelphia Phillies (+14.5)", "Colorado ROckies (+14.5)", "San Diego Padres (+16.5)", 
+            "St. Louis Cardinals (+9)", "Pittsburgh Pirates (+10.5)", "Philadelphia Phillies (+14.5)", "Colorado Rockies (+14.5)", "San Diego Padres (+16.5)", 
             "Milwaukee Brewers (+17)", "Arizona DIamondbacks (+18)", "Cincinnati Reds (+23)", "Atlanta Braves (+25)"]
   }
 }
@@ -163,7 +163,7 @@ app.post('/webhook/', function(req, res) {
 
 
 function sendTextMessage(sender, text) {
-  let messageData = { text: text.subString(0, 320) };
+  let messageData = { text: text.substring(0, 320) };
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: { access_token: fbToken },
