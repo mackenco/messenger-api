@@ -50,6 +50,8 @@ const wit = new Wit({
     send({sessionId}, {text}) {
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
+        console.log('in send');
+        console.log('text:', text);
         return sendTextMessage(recipientId, text)
         .then(() => null)
         .catch((err) => {
@@ -176,7 +178,7 @@ app.post('/webhook/', function(req, res) {
 
 
 function sendTextMessage(sender, text) {
-  let messageData = { text: text.substring(0, 320) };
+  let messageData = { text: text.substring(0, 256) };
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: { access_token: fbToken },
