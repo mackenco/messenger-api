@@ -53,6 +53,7 @@ const wit = new Wit({
       if (recipientId) {
         console.log('send is firing');
         var t = text.attachment || text;
+        console.log('text is: ', t);
         return fbMessage(recipientId, t)
         .then(() => null)
         .catch((err) => {
@@ -203,7 +204,7 @@ const fbMessage = (id, text) => {
 };
 
 function buildGenericMessage(message) {
-  return {
+  var obj = {
     "attachment": {
       "type": "template",
       "payload": {
@@ -224,6 +225,7 @@ function buildGenericMessage(message) {
       } 
     }
   };
+  return obj;
 }
 
 app.listen(app.get('port'), function() {
