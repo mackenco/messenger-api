@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const fetc = require('node-fetch');
 const _ = require('underscore');
 const Wit = require('node-wit').Wit;
 const log = require('node-wit').log;
@@ -51,7 +52,7 @@ const wit = new Wit({
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
         console.log('send is firing');
-        return sendTextMessage(recipientId, text)
+        return fbMessage(recipientId, text)
         .then(() => null)
         .catch((err) => {
           console.error('Oops, something went wrong while forward the response to ', recipientId, ':', err.stack || err); 
@@ -71,7 +72,6 @@ const wit = new Wit({
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         console.log('game:', game);
-        // context.score = buildGenericMessage(game);
         context.score = game.title;
         return resolve(context);
       }); 
@@ -158,7 +158,7 @@ app.post('/webhook/', function(req, res) {
           const {text, attachments} = event.message;
 
           if (attachments) {
-            sendTextMessage(sender, 'Sorry, I can only process text messages for now.')
+            fbMessage(sender, 'Sorry, I can only process text messages for now.')
             .catch(console.error); 
           } else if (text) {
             wit.runActions(sessionId, text, sessions[sessionId].context)
@@ -179,32 +179,25 @@ app.post('/webhook/', function(req, res) {
   res.sendStatus(200);
 });
 
-
-function sendTextMessage(sender, text) {
-  var messageData;
-  if (text.generic) { 
-    console.log('generic is firing');
-    messageData = { attachment: text.attachment }; 
-  } else {
-    console.log('generic is not firing');
-    messageData = { text: text.substring(0, 256) };
-  }
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: fbToken },
-    method: 'POST',
-    json: {
-      recipient: { id: sender },
-      message: messageData, 
-    } 
-  }, function(error, response, body) {
-    if (error) {
-      console.log('Error sending messages: ', error); 
-    } else if (response.body.error) {
-      console.log('Error: ', response.body.error); 
-    } 
+const fbMessage = (id, text) => {
+  const body = JSON.stringify({
+    recipient: { id },
+    message: { text },
   });
-}
+  const qs = 'access_token=' + encodeURIComponent(fbToken);
+  return fetch('https://graph.facebook.com/me/messages?' + qs, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body,    
+  })
+  .then(rsp => rsp.json())
+  .then(json => {
+    if (json.error && json.error.message) {
+      throw new Error(json.error.message); 
+    }
+    return json; 
+  });
+};
 
 function buildGenericMessage(message) {
   return {
