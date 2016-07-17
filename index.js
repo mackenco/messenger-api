@@ -21,7 +21,7 @@ app.get('/webhook/', function(req, res) {
   res.send('Error, wrong token');  
 });
 
-app.list(app.get('port'), function() {
+app.listen(app.get('port'), function() {
   console.log('magic happenin on: ', app.get('port'));  
 });
 
