@@ -14,7 +14,7 @@ const witToken = process.env.WIT_ACCESS_TOKEN;
 const gameData = {
   'Astros':[{
     'date': '2016-07-16',
-    'title': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.' 
+    'title': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.',
     'image': 'http://m.mlb.com/assets/images/9/4/4/189989944/cuts/Martin1280_cqe84jx2_p9jo6pyt.jpg',
     'recap': 'http://m.mlb.com/news/article/189965930/mariners-defeat-astros-in-pitchers-duel/',
     'page': 'http://mlb.mlb.com/mlb/gameday/index.jsp?gid=2016_07_16_houmlb_seamlb_1#game=2016_07_16_houmlb_seamlb_1,game_state=Wrapup'
