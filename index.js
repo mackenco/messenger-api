@@ -185,6 +185,7 @@ const fbMessage = (id, text) => {
     recipient: { id },
     message: { text },
   });
+  console.log('body is ', body);
   const qs = 'access_token=' + encodeURIComponent(fbToken);
   return fetch('https://graph.facebook.com/v2.6/me/messages?' + qs, {
     method: 'POST',
