@@ -39,10 +39,11 @@ const wit = new Wit({
       }
     },
     getScore({context, entities}) {
+      console.log('entities ', entities);
       return new Promise(function(resolve, reject) {
         var team = firstEntityValue(entities, 'team');
         console.log('team is ', team);
-        var date = firstEntityValue(entities, 'date');
+        var date = firstEntityValue(entities, 'wit/datetime');
         console.log('date is ', date);
         var teamGameData = gameData[team];
         console.log('teamGameData is', teamGameData);
