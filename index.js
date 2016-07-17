@@ -178,10 +178,11 @@ app.post('/webhook/', function(req, res) {
 
 
 function sendTextMessage(sender, text, generic) {
+  var messageData;
   if (generic) { 
-    let messageData = { attachment: text.attachment }; 
+    messageData = { attachment: text.attachment }; 
   } else {
-    let messageData = { text: text.substring(0, 256) };
+    messageData = { text: text.substring(0, 256) };
   }
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
