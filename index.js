@@ -50,6 +50,7 @@ const wit = new Wit({
     send({sessionId}, {text}) {
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
+        console.log('send is firing');
         return sendTextMessage(recipientId, text)
         .then(() => null)
         .catch((err) => {
@@ -185,6 +186,7 @@ function sendTextMessage(sender, text) {
     console.log('generic is firing');
     messageData = { attachment: text.attachment }; 
   } else {
+    console.log('generic is not firing');
     messageData = { text: text.substring(0, 256) };
   }
   request({
