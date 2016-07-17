@@ -87,7 +87,7 @@ function sendGenericMessage(sender) {
           "title": "Second card",
           "subtitle": "Element #2 of an hscroll",
           "image_url": "http://mlb.mlb.com/images/players/action_shots/514888.jpg",
-          "butons": [{
+          "buttons": [{
             "type": "postback",
             "title": "Postback",
             "payload": "Payload for a second element in a generic bubble"
