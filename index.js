@@ -62,6 +62,7 @@ const wit = new Wit({
     },
     getScore({context, entities}) {
       return new Promise(function(resolve, reject) {
+        console.log('get scores is firing');
         var team = firstEntityValue(entities, 'team');
         var date = firstEntityValue(entities, 'datetime').split("T")[0];
         if (!team && !date) { return resolve(context); }
@@ -76,6 +77,7 @@ const wit = new Wit({
     },
     getStandings({context, entities}) {
       return new Promise(function(resolve, reject) {
+        console.log('get standings is firing');
         var division = firstEntityValue(entities, 'division');
         var league = firstEntityValue(entities, 'league'); 
         if (!division && !league) { return resolve(context); }
