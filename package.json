@@ -1,6 +1,9 @@
 {
   "name": "messenger-api",
   "version": "0.1.0",
+  "engines": {
+    "node": "6.3.0"  
+  },
   "description": "basic chat api for messenger",
   "main": "index.js",
   "scripts": {
