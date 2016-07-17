@@ -4,7 +4,7 @@
   "description": "basic chat api for messenger",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js --harmony --use_strict --harmony_generators"
   },
   "author": "mackenco",
   "repository": "https://github.com/mackenco/messenger-api.git",
