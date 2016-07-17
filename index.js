@@ -52,7 +52,7 @@ const wit = new Wit({
       if (recipientId) {
         console.log('in send');
         console.log('text:', text);
-        return sendTextMessage(recipientId, text)
+        return sendTextMessage(recipientId, text, text.generic)
         .then(() => null)
         .catch((err) => {
           console.error('Oops, something went wrong while forward the response to ', recipientId, ':', err.stack || err); 
@@ -177,8 +177,12 @@ app.post('/webhook/', function(req, res) {
 });
 
 
-function sendTextMessage(sender, text) {
-  let messageData = { text: text.substring(0, 256) };
+function sendTextMessage(sender, text, generic) {
+  if (generic) { 
+    let messageData = { attachment: text.attachment }; 
+  } else {
+    let messageData = { text: text.substring(0, 256) };
+  }
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: { access_token: fbToken },
@@ -217,7 +221,8 @@ function buildGenericMessage(message) {
           }]
         }] 
       } 
-    } 
+    },
+    "generic": true
   };
 
 //   request({
