@@ -22,6 +22,25 @@ const gameData = {
   }]
 }
 
+const standingsData = {
+  "AL" : {
+    "east": ["1. Baltimore Orioles", "2. Boston Red Sox (+1.5)", "3. Toronto Blue Jays (+3.5)", "4. New York Yankees (+9)", "5. Tampa Bay Rays (+18.5)"],
+    "central": ["1. Cleveland Indians", "2. Detroit Tigers (+6)", "3. Kansas City Royals (+7.5)", "4. Chicago White Sox (+8)", "5. Minnesota Twins (+20)"],
+    "west": ["1. Texas Rangers", "2. Houston Astros (+5)", "3. Seattle Mariners (+8)", "4. Oakland Athletics (+14)", "5. Los Angeles Angels (+15)"],
+    "all": ["Texas Rangers", "Baltimore Orioles (+0.5)", "Cleveland Indians (+0.5)", "Boston Red Sox (+2)", "Toronto Blue Jays (+4)", "Houston Astros (+5)", 
+            "Detroit Tigets (+6.5)", "Seattle Mariners (+8)", "Kansas City Royals (+8)", "Chicago White Sox (+8.5)", "New York Yankees (+9.5)", 
+            "Oakland Athletics (+14)", "Los Angeles Angels (+15)", "Tampa Bay Rays (+19)", "Minnesota Twins (+20.5)"]
+  },
+  "NL": {
+    "east": ["1. Washington Nationals", "2. New York Mets(+6.5)", "3. Miami Marlins (+7)", "4. Philadelphia Phillies (+13.5)", "5. Atlanta Braves (+24.5)"],
+    "central": ["1. Chicago Cubs", "2. St. Louis Cardinals (+7.5)", "3. Pittsburgh Pirates (+9)", "4. Milwaukee Brewers (+15.5)", "5. Cincinnati Reds (+21.5)"],
+    "west": ["1. San Francisco Giants", "2. Los Angeles Dodgers (+5.5)", "3. Colorado Rockies (+14)", "4. San Diego Padres (+16.5)", "5. Arizona Diamondbacks (+18)"],
+    "all": ["San Francisco Giants", "Washington Nationals (+1)", "Chicago Cubs (+1.5)", "Los Angeles Dodgers (+5.5)", "New York Mets (+7.5)", "Miami Marlins (+8)", 
+            "St. Louis Cardinals (+9)", "Pittsburgh Pirates (+10.5)", "Philadelphia Phillies (+14.5)", "Colorado ROckies (+14.5)", "San Diego Padres (+16.5)", 
+            "Milwaukee Brewers (+17)", "Arizona DIamondbacks (+18)", "Cincinnati Reds (+23)", "Atlanta Braves (+25)"]
+  }
+}
+
 const wit = new Wit({
   accessToken: witToken,
   actions: {
@@ -47,6 +66,15 @@ const wit = new Wit({
         context.score = _.findWhere(teamGameData, {date: date}).scoreString;
         return resolve(context);
       }); 
+    },
+    getStandings({context, entities}) {
+      var division = firstEntityValue(entities, 'division');
+      var league = firstEntityValue(entities, 'league'); 
+      var leagueData = standingsData[league];
+      var standings = division ? leagueData[division] : leagueData['all']; 
+
+      context.standings = standings.join("\n");
+      return resolve(context);
     }
   },
   logger: new log.Logger(log.INFO)
