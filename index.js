@@ -98,7 +98,7 @@ app.post('/webhook/', function(req, res) {
   const data = req.body;
 
   if (data.object === 'page') {
-    entry.messaging.forEach(event => {
+    data.entry.messaging.forEach(event => {
       if (event.message) {
         const sender = event.sender.id;
         const sessionId = findOrCreateSession(sender);
