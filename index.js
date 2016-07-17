@@ -4,7 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const _ = require('underscore');
-const {Wit, log} = require('node-wit');
+const Wit = require('node-wit').Wit;
+const log = require('node-wit').log;
 const app = express();
 
 const fbToken = process.env.FB_PAGE_ACCESS_TOKEN;
