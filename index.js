@@ -52,7 +52,8 @@ const wit = new Wit({
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
         console.log('send is firing');
-        return fbMessage(recipientId, text)
+        var t = text.attachment || text;
+        return fbMessage(recipientId, t)
         .then(() => null)
         .catch((err) => {
           console.error('Oops, something went wrong while forward the response to ', recipientId, ':', err.stack || err); 
