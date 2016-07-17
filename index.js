@@ -179,13 +179,23 @@ app.post('/webhook/', function(req, res) {
   res.sendStatus(200);
 });
 
+// const fbMessage = (id, text) => {
+//   const json = JSON.stringify({
+//     recipient: [ id },
+//     message: { text } 
+//   });
+
+//   request({
+//     url: 'https://graph.facebook.com/'   
+//   }, )
+// }
 const fbMessage = (id, text) => {
   const body = JSON.stringify({
     recipient: { id },
     message: { text },
   });
   const qs = 'access_token=' + encodeURIComponent(fbToken);
-  return fetch('https://graph.facebook.com/me/messages?' + qs, {
+  return fetch('https://graph.facebook.com/v2.6/me/messages?' + qs, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body,    
