@@ -69,9 +69,13 @@ const wit = new Wit({
     },
     getStandings({context, entities}) {
       var division = firstEntityValue(entities, 'division');
+      console.log(division);
       var league = firstEntityValue(entities, 'league'); 
+      console.log(league);
       var leagueData = standingsData[league];
+      console.log(leagueData);
       var standings = division ? leagueData[division] : leagueData['all']; 
+      console.log(standings);
 
       context.standings = standings.join("\n");
       return resolve(context);
