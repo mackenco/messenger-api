@@ -29,7 +29,7 @@ app.post('/webhook/', function(req, res) {
       let text = event.message.text;
       if (text === 'Generic') {
         sendGenericMessage(sender);
-        continue; 
+        return;
       }
       sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200)); 
     } 
@@ -37,7 +37,7 @@ app.post('/webhook/', function(req, res) {
     if (event.postback) {
       let text = JSON.stringify(event.postback);
       sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token);
-      continue; 
+      return;
     }
   });
   res.sendStatus(200);
