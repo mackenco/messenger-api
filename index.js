@@ -72,7 +72,8 @@ const wit = new Wit({
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         console.log('game:', game);
-        context.score = game.title;
+        // context.score = game.title;
+        context.score = buildGenericMessage(game);
         return resolve(context);
       }); 
     },
@@ -179,16 +180,6 @@ app.post('/webhook/', function(req, res) {
   res.sendStatus(200);
 });
 
-// const fbMessage = (id, text) => {
-//   const json = JSON.stringify({
-//     recipient: [ id },
-//     message: { text } 
-//   });
-
-//   request({
-//     url: 'https://graph.facebook.com/'   
-//   }, )
-// }
 const fbMessage = (id, text) => {
   const body = JSON.stringify({
     recipient: { id },
@@ -211,7 +202,6 @@ const fbMessage = (id, text) => {
 
 function buildGenericMessage(message) {
   return {
-  // let messageData = {
     "attachment": {
       "type": "template",
       "payload": {
@@ -230,25 +220,8 @@ function buildGenericMessage(message) {
           }]
         }] 
       } 
-    },
-    "generic": true
+    }
   };
-
-//   request({
-//     url: 'https://graph.facebook.com/v2.6/me/messages',
-//     qs: { access_token: fbToken },
-//     method: 'POST',
-//     json: {
-//       recipient: { id: sender },
-//       message: messageData 
-//     } 
-//   }, function(error, response, body) {
-//     if (error) {
-//       console.log('Error sending messages: ', error); 
-//     } else if (response.body.error) {
-//       console.log('Error: ', response.body.error); 
-//     } 
-//   });
 }
 
 app.listen(app.get('port'), function() {
