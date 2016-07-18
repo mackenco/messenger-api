@@ -72,6 +72,7 @@ const wit = new Wit({
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         context.score = game.title;
+        context.whatever = 'something else';
         return resolve(context);
       }); 
     },
