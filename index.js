@@ -51,6 +51,7 @@ const wit = new Wit({
     send({sessionId}, {text}) {
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
+        console.log('text', text);
         return fbMessage(recipientId, text)
         .then(() => null)
         .catch((err) => {
@@ -70,8 +71,7 @@ const wit = new Wit({
 
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
-        // context.score = game.title;
-        context.score = JSON.parse(buildGenericMessage(game));
+        context.score = game.title;
         return resolve(context);
       }); 
     },
@@ -181,7 +181,7 @@ app.post('/webhook/', function(req, res) {
 const fbMessage = (id, text) => {
   const body = JSON.stringify({
     recipient: { id },
-    message: { text: text.attachment || text },
+    message: { text },
   });
   console.log('body is ', body);
   const qs = 'access_token=' + encodeURIComponent(fbToken);
@@ -221,7 +221,7 @@ function buildGenericMessage(message) {
       } 
     }
   };
-  return JSON.stringify(obj);
+  return obj;
 }
 
 app.listen(app.get('port'), function() {
