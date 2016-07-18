@@ -51,10 +51,7 @@ const wit = new Wit({
     send({sessionId}, {text}) {
       const recipientId = sessions[sessionId].fbid;
       if (recipientId) {
-        console.log('send is firing');
-        var t = text.attachment || text;
-        console.log('text is: ', t);
-        return fbMessage(recipientId, t)
+        return fbMessage(recipientId, text)
         .then(() => null)
         .catch((err) => {
           console.error('Oops, something went wrong while forward the response to ', recipientId, ':', err.stack || err); 
@@ -184,7 +181,7 @@ app.post('/webhook/', function(req, res) {
 const fbMessage = (id, text) => {
   const body = JSON.stringify({
     recipient: { id },
-    message: { text },
+    message: { text: text.attachment || text },
   });
   console.log('body is ', body);
   const qs = 'access_token=' + encodeURIComponent(fbToken);
@@ -224,7 +221,7 @@ function buildGenericMessage(message) {
       } 
     }
   };
-  return JSON.stringify(obj);
+  return obj;
 }
 
 app.listen(app.get('port'), function() {
