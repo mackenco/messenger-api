@@ -16,7 +16,7 @@ const gameData = {
   'Astros':[
   {
     'date': '2016-07-17',
-    'scoreString': 'The Houston Astros beat the Seattle Mariners 8-1 on July 17.' 
+    'title': 'The Houston Astros beat the Seattle Mariners 8-1 on July 17.' 
   },
   {
     'date': '2016-07-16',
@@ -27,7 +27,7 @@ const gameData = {
   },
   {
     'date': '2016-07-15',
-    'scoreString': 'The Houston Astros beat the Seattle Mariners 7-3 on July 15.' 
+    'title': 'The Houston Astros beat the Seattle Mariners 7-3 on July 15.' 
   }]
 }
 
