@@ -13,7 +13,12 @@ const fbToken = process.env.FB_PAGE_ACCESS_TOKEN;
 const witToken = process.env.WIT_ACCESS_TOKEN; 
 
 const gameData = {
-  'Astros':[{
+  'Astros':[
+  {
+    'date': '2016-07-17',
+    'scoreString': 'The Houston Astros beat the Seattle Mariners 8-1 on July 17.' 
+  },
+  {
     'date': '2016-07-16',
     'title': 'The Seatle Mariners beat the Houston Astros 1-0 on July 16.',
     'image': 'http://m.mlb.com/assets/images/9/4/4/189989944/cuts/Martin1280_cqe84jx2_p9jo6pyt.jpg',
@@ -72,7 +77,6 @@ const wit = new Wit({
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         context.score = game.title;
-        context.whatever = 'something else';
         return resolve(context);
       }); 
     },
