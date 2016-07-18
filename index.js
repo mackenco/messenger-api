@@ -71,7 +71,7 @@ const wit = new Wit({
         var teamGameData = gameData[team];
         var game = _.findWhere(teamGameData, {date: date});
         // context.score = game.title;
-        context.score = buildGenericMessage(game);
+        context.score = JSON.parse(buildGenericMessage(game));
         return resolve(context);
       }); 
     },
@@ -179,9 +179,6 @@ app.post('/webhook/', function(req, res) {
 });
 
 const fbMessage = (id, text) => {
-  console.log('text is:', text);
-  console.log('attachment', text.attachment);
-  console.log('json', JSON.stringify(text).attachment);
   const body = JSON.stringify({
     recipient: { id },
     message: { text: text.attachment || text },
@@ -224,7 +221,7 @@ function buildGenericMessage(message) {
       } 
     }
   };
-  return obj;
+  return JSON.stringify(obj);
 }
 
 app.listen(app.get('port'), function() {
