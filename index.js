@@ -179,6 +179,9 @@ app.post('/webhook/', function(req, res) {
 });
 
 const fbMessage = (id, text) => {
+  console.log('text is:', text);
+  console.log('attachment', text.attachment);
+  console.log('json', JSON.stringify(text).attachment);
   const body = JSON.stringify({
     recipient: { id },
     message: { text: text.attachment || text },
